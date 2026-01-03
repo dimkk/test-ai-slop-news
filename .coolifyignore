@@ -1,0 +1,12 @@
+# Coolify configuration files
+.coolify/
+.env.production
+.env.preview
+
+# Sensitive files
+*.key
+*.pem
+ssl/
+
+# Backup files (keep the structure)
+backups/

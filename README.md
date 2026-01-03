@@ -28,8 +28,8 @@ An AI-powered news portal that aggregates content from multiple sources and dist
 
 ### Infrastructure
 - **Containerization**: Docker Compose
-- **Deployment**: Coolify
-- **CI/CD**: GitHub Actions
+- **Deployment**: Coolify (Self-hosted)
+- **CI/CD**: GitHub Actions + Coolify Preview Deployments
 - **Development**: GitHub PR → Preview workflow
 
 ## Quick Start
@@ -128,6 +128,46 @@ ai-news-portal/
 - 🔄 Authentication system
 - 🔄 API endpoints
 - 🔄 Frontend components
+
+## Coolify Setup
+
+See [COOLIFY_SETUP.md](./COOLIFY_SETUP.md) for detailed deployment instructions.
+
+### Quick Coolify Start
+
+1. **Create Coolify Project**
+   ```bash
+   # Follow the guide in COOLIFY_SETUP.md
+   # Set up GitHub webhook and preview deployments
+   ```
+
+2. **Configure Production Environment**
+   ```bash
+   cp .env.production.example .env.production
+   # Update with your actual values
+   ```
+
+3. **Deploy Preview Environment**
+   ```bash
+   # Open a PR to trigger automatic preview deployment
+   .coolify/scripts/deploy-helper.sh deploy ai-news-portal-backend feature/your-feature
+   ```
+
+### Coolify Commands
+
+```bash
+# List all applications
+.coolify/scripts/deploy-helper.sh list
+
+# Check application status
+.coolify/scripts/deploy-helper.sh status ai-news-portal-backend
+
+# Manual deployment
+.coolify/scripts/deploy-helper.sh deploy ai-news-portal-backend main $(git rev-parse HEAD)
+
+# Health check
+.coolify/scripts/deploy-helper.sh health
+```
 
 ## License
 

@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Preview environment override
+  postgres:
+    environment:
+      - POSTGRES_DB=ai_news_portal_preview_${PR_NUMBER:-preview}
+    volumes:
+      - preview_postgres_${PR_NUMBER:-preview}:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  redis:
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.1'
+    command: redis-server --maxmemory 100mb --maxmemory-policy allkeys-lru
+
+  backend:
+    environment:
+      - NODE_ENV=preview
+      - LOG_LEVEL=debug
+      - LOG_FORMAT=pretty
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    command: bun run dev
+
+  frontend:
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://backend:3000
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.1'
+    command: npm run dev
+
+  # Auto-remove preview data containers after PR close
+  preview-cleanup:
+    image: alpine:latest
+    command: |
+      sh -c "
+        echo 'Preview environment for PR ${PR_NUMBER:-unknown}'
+        echo 'Data will be cleaned up when PR is closed'
+        sleep infinity
+      "
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+          cpus: '0.05'
+
+volumes:
+  preview_postgres_${PR_NUMBER:-preview}:
+    driver: local

@@ -16,16 +16,12 @@ services:
         reservations:
           memory: 256M
           cpus: '0.25'
-    restart_policy:
-      condition: on-failure
-      delay: 5s
-      max_attempts: 3
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
 
   frontend:
     environment:
@@ -39,16 +35,12 @@ services:
         reservations:
           memory: 128M
           cpus: '0.1'
-    restart_policy:
-      condition: on-failure
-      delay: 5s
-      max_attempts: 3
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
 
   postgres:
     environment:
@@ -80,10 +72,7 @@ services:
           cpus: '0.1'
     volumes:
       - redis_data:/data
-    # restart_policy:
-    #   condition: on-failure
-    #   delay: 5s
-    #   max_attempts: 3
+    restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 200mb --maxmemory-policy allkeys-lru
 
   # Production ingress/load balancer
@@ -99,10 +88,7 @@ services:
     depends_on:
       - frontend
       - backend
-    restart_policy:
-      condition: on-failure
-      delay: 5s
-      max_attempts: 3
+    restart: unless-stopped
     deploy:
       resources:
         limits:

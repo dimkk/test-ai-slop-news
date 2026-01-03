@@ -80,10 +80,10 @@ services:
           cpus: '0.1'
     volumes:
       - redis_data:/data
-    restart_policy:
-      condition: on-failure
-      delay: 5s
-      max_attempts: 3
+    # restart_policy:
+    #   condition: on-failure
+    #   delay: 5s
+    #   max_attempts: 3
     command: redis-server --appendonly yes --maxmemory 200mb --maxmemory-policy allkeys-lru
 
   # Production ingress/load balancer
